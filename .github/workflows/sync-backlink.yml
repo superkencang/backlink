@@ -1,0 +1,57 @@
+name: Sync Backlink dari Issues
+
+on:
+  issues:
+    types: [opened, edited, labeled, reopened]
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      contents: write
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        
+      - name: Sync dari Issues ke bl.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📥 Mengambil data dari Issues..."
+          
+          ISSUES=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/issues?labels=backlink&state=open&per_page=100")
+          
+          ISSUE_COUNT=$(echo "$ISSUES" | grep -o '"title"' | wc -l)
+          
+          if [ "$ISSUE_COUNT" -gt 0 ]; then
+            echo "📝 Ditemukan $ISSUE_COUNT issue dengan label backlink"
+            
+            echo '<div class="sponsor-area" style="position:absolute; left:-9999px;">' > bl.txt
+            
+            echo "$ISSUES" | grep -oP '(?<=<a href=")[^"]*' | while read -r link; do
+              if [ -n "$link" ]; then
+                echo "<a href=\"$link\" rel=\"dofollow\">$link</a><br>" >> bl.txt
+              fi
+            done
+            
+            echo '</div>' >> bl.txt
+            
+          else
+            echo "ℹ️ Tidak ada issue dengan label backlink"
+            echo '<div class="sponsor-area" style="position:absolute; left:-9999px;">' > bl.txt
+            echo '</div>' >> bl.txt
+          fi
+          
+      - name: Commit perubahan
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "🔄 Auto-sync backlink dari Issues"
+          file_pattern: "bl.txt"
+          commit_user_name: "Backlink Bot"
+          commit_user_email: "bot@github.com"
