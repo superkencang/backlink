@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backlink Manager - Tambah & Hapus Link Otomatis</title>
+    <title>Backlink Manager - Auto Label</title>
     <style>
         * {
             margin: 0;
@@ -149,16 +149,6 @@
 
         .btn-secondary:hover {
             background: #d1d5db;
-        }
-
-        .btn-warning {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background: #d97706;
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
         }
 
         .btn-group {
@@ -352,6 +342,15 @@
             border-radius: 6px;
         }
 
+        .success-animation {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-animation .big-icon {
+            font-size: 64px;
+        }
+
         @media (max-width: 480px) {
             .card {
                 padding: 20px;
@@ -391,7 +390,7 @@
         <div class="card">
             <div class="header">
                 <h1>🔗 Backlink Manager</h1>
-                <div class="subtitle">Tambah & Hapus Link — Otomatis masuk ke bl.txt</div>
+                <div class="subtitle">Tambah & Hapus Link — Langsung masuk ke bl.txt</div>
                 <div class="badge">📁 superkencang/backlink/bl.txt</div>
             </div>
 
@@ -424,17 +423,17 @@
                     </div>
 
                     <div class="btn-group">
-                        <button type="submit" class="btn btn-success">📝 Buat Issue</button>
+                        <button type="submit" class="btn btn-success">📝 Buat Issue + Label</button>
                         <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
                     </div>
                 </form>
 
                 <!-- Preview -->
                 <div id="previewSection" style="display:none; margin-top:20px;">
-                    <h4 style="margin-bottom:8px;">📋 Preview HTML yang akan dibuat:</h4>
+                    <h4 style="margin-bottom:8px;">📋 Preview:</h4>
                     <div class="code-preview" id="previewContent"></div>
                     <div class="btn-group">
-                        <button class="btn btn-primary" onclick="openIssue()">🔗 Buka Issue Baru</button>
+                        <button class="btn btn-primary" onclick="openIssue()">🔗 Buka Issue (Auto Label)</button>
                         <button class="btn btn-secondary" onclick="copyPreview()">📋 Copy</button>
                     </div>
                 </div>
@@ -458,17 +457,17 @@
                     </div>
 
                     <div class="btn-group">
-                        <button type="submit" class="btn btn-danger">🗑️ Buat Issue Hapus</button>
+                        <button type="submit" class="btn btn-danger">🗑️ Buat Issue Hapus + Label</button>
                         <button type="button" class="btn btn-secondary" onclick="resetDelete()">🔄 Reset</button>
                     </div>
                 </form>
 
                 <!-- Preview Delete -->
                 <div id="previewDeleteSection" style="display:none; margin-top:20px;">
-                    <h4 style="margin-bottom:8px;">📋 Preview Issue Hapus:</h4>
+                    <h4 style="margin-bottom:8px;">📋 Preview:</h4>
                     <div class="code-preview" id="previewDeleteContent"></div>
                     <div class="btn-group">
-                        <button class="btn btn-danger" onclick="openDeleteIssue()">🗑️ Buka Issue Hapus</button>
+                        <button class="btn btn-danger" onclick="openDeleteIssue()">🗑️ Buka Issue (Auto Label)</button>
                         <button class="btn btn-secondary" onclick="copyDeletePreview()">📋 Copy</button>
                     </div>
                 </div>
@@ -501,8 +500,8 @@
             <div class="tips">
                 <h4>💡 Cara Kerja:</h4>
                 <ul>
-                    <li><strong>Tambah:</strong> Buat Issue dengan label <code>backlink</code> → Otomatis masuk ke bl.txt</li>
-                    <li><strong>Hapus:</strong> Buat Issue dengan label <code>delete-backlink</code> → Otomatis dihapus dari bl.txt</li>
+                    <li><strong>Tambah:</strong> Klik "Buat Issue + Label" → Langsung terbuka dengan label <code>backlink</code></li>
+                    <li><strong>Hapus:</strong> Klik "Buat Issue Hapus + Label" → Langsung terbuka dengan label <code>delete-backlink</code></li>
                     <li><strong>Proses:</strong> GitHub Actions akan memproses setiap 5 menit</li>
                     <li><strong>Hasil:</strong> <a href="https://superkencang.github.io/backlink/bl.txt" target="_blank">superkencang.github.io/backlink/bl.txt</a></li>
                 </ul>
@@ -619,23 +618,21 @@
             }
 
             const issueTitle = `Backlink: ${linkTexts.join(', ')}`;
-            const issueBody = `## 📌 Link Baru\n\n${links.join('\n')}\n\n---\n*Dikirim dari Backlink Manager*\n\n---\n\n**📌 JANGAN LUPA:**\n1. Di bagian kanan, klik **"Labels"**\n2. Pilih label **"backlink"**\n3. Baru klik **"Create"**`;
+            const issueBody = `## 📌 Link Baru\n\n${links.join('\n')}\n\n---\n*Dikirim dari Backlink Manager*`;
 
             document.getElementById('previewContent').textContent = issueBody;
             document.getElementById('previewSection').style.display = 'block';
 
             window._issueData = {
                 title: issueTitle,
-                body: issueBody
+                body: issueBody,
+                labels: 'backlink'
             };
 
-            showAlert('warning', `
-                ⚠️ <strong>PENTING!</strong><br>
-                Setelah halaman issue terbuka:<br>
-                1. Di bagian kanan, klik <strong>"Labels"</strong><br>
-                2. Pilih label <strong>"backlink"</strong><br>
-                3. Klik <strong>"Create"</strong>
-            `, 10000);
+            showAlert('success', `
+                ✅ Berhasil membuat ${links.length} link!<br>
+                📋 Klik <strong>"Buka Issue (Auto Label)"</strong> — Label sudah otomatis!
+            `, 8000);
 
             document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
             return false;
@@ -648,26 +645,16 @@
                 return;
             }
 
-            const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(data.title)}&body=${encodeURIComponent(data.body)}`;
+            // URL dengan label otomatis
+            const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(data.title)}&body=${encodeURIComponent(data.body)}&labels=${data.labels}`;
             window.open(url, '_blank');
             
-            showAlert('info', `
-                📝 Halaman Issue terbuka.<br>
-                <strong>JANGAN LUPA:</strong> Pilih label <strong>"backlink"</strong> di bagian kanan!
-            `, 8000);
+            showAlert('success', '✅ Issue terbuka dengan label "backlink"! Langsung klik "Submit new issue"', 5000);
         }
 
         function copyPreview() {
             const content = document.getElementById('previewContent').textContent;
             navigator.clipboard.writeText(content).then(() => {
-                showAlert('success', '✅ Content copied to clipboard!');
-            }).catch(() => {
-                const textarea = document.createElement('textarea');
-                textarea.value = content;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
                 showAlert('success', '✅ Content copied!');
             });
         }
@@ -699,23 +686,21 @@
             }
 
             const issueTitle = `Hapus Backlink: ${query.substring(0, 50)}...`;
-            const issueBody = `## 🗑️ Hapus Link\n\n**Link yang akan dihapus:**\n\n\`\`\`html\n${query}\n\`\`\`\n\n**Alasan:** ${reason || 'Tidak disebutkan'}\n\n---\n*Dikirim dari Backlink Manager*\n\n---\n\n**📌 JANGAN LUPA:**\n1. Di bagian kanan, klik **"Labels"**\n2. Pilih label **"delete-backlink"**\n3. Baru klik **"Create"**`;
+            const issueBody = `## 🗑️ Hapus Link\n\n**Link yang akan dihapus:**\n\n\`\`\`html\n${query}\n\`\`\`\n\n**Alasan:** ${reason || 'Tidak disebutkan'}\n\n---\n*Dikirim dari Backlink Manager*`;
 
             document.getElementById('previewDeleteContent').textContent = issueBody;
             document.getElementById('previewDeleteSection').style.display = 'block';
 
             window._deleteData = {
                 title: issueTitle,
-                body: issueBody
+                body: issueBody,
+                labels: 'delete-backlink'
             };
 
             showAlert('warning', `
-                ⚠️ <strong>PENTING!</strong><br>
-                Setelah halaman issue terbuka:<br>
-                1. Di bagian kanan, klik <strong>"Labels"</strong><br>
-                2. Pilih label <strong>"delete-backlink"</strong><br>
-                3. Klik <strong>"Create"</strong>
-            `, 10000);
+                ⚠️ Issue hapus akan dibuat!<br>
+                📋 Klik <strong>"Buka Issue (Auto Label)"</strong> — Label sudah otomatis!
+            `, 8000);
 
             document.getElementById('previewDeleteSection').scrollIntoView({ behavior: 'smooth' });
             return false;
@@ -728,26 +713,16 @@
                 return;
             }
 
-            const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(data.title)}&body=${encodeURIComponent(data.body)}`;
+            // URL dengan label otomatis
+            const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(data.title)}&body=${encodeURIComponent(data.body)}&labels=${data.labels}`;
             window.open(url, '_blank');
             
-            showAlert('info', `
-                📝 Halaman Issue terbuka.<br>
-                <strong>JANGAN LUPA:</strong> Pilih label <strong>"delete-backlink"</strong> di bagian kanan!
-            `, 8000);
+            showAlert('success', '✅ Issue terbuka dengan label "delete-backlink"! Langsung klik "Submit new issue"', 5000);
         }
 
         function copyDeletePreview() {
             const content = document.getElementById('previewDeleteContent').textContent;
             navigator.clipboard.writeText(content).then(() => {
-                showAlert('success', '✅ Content copied!');
-            }).catch(() => {
-                const textarea = document.createElement('textarea');
-                textarea.value = content;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
                 showAlert('success', '✅ Content copied!');
             });
         }
@@ -819,7 +794,7 @@
         function prepareDelete(link) {
             switchTab('delete');
             document.getElementById('deleteQuery').value = link;
-            showAlert('info', '📋 Link sudah diisi di form hapus. Klik "Buat Issue Hapus" untuk melanjutkan.', 5000);
+            showAlert('info', '📋 Link sudah diisi di form hapus. Klik "Buat Issue Hapus + Label" untuk melanjutkan.', 5000);
         }
 
         function copyAllLinks() {
@@ -855,10 +830,10 @@
         });
 
         // ===== INIT =====
-        console.log('🔗 Backlink Manager with Delete siap!');
+        console.log('🔗 Backlink Manager - Auto Label siap!');
         console.log('📁 Repository: superkencang/backlink');
         console.log('💡 Tips: Gunakan Ctrl+Enter untuk submit cepat');
-        console.log('⚠️ JANGAN LUPA pilih label "backlink" atau "delete-backlink" saat membuat issue!');
+        console.log('✅ Label otomatis! Tidak perlu pilih manual lagi.');
 
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(loadLinks, 1000);
