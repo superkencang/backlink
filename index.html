@@ -308,6 +308,7 @@
             padding: 4px 10px;
             font-size: 11px;
             border-radius: 6px;
+            cursor: pointer;
         }
 
         .link-item .link-index {
@@ -538,7 +539,7 @@
     <script>
         // ===== KONFIGURASI =====
         // 🔑 GANTI PASSWORD DI SINI!
-        const CORRECT_PASSWORD = 'russia';
+        const CORRECT_PASSWORD = 'indonesiaku';
 
         // 🔑 TOKEN GITHUB (DISEMBUNYIKAN DI SINI)
         const GITHUB_TOKEN = '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';
@@ -787,14 +788,22 @@
             }
         }
 
-        // ===== DELETE LINK =====
+        // ===== DELETE LINK (DIPERBAIKI) =====
         async function deleteLinkFromList(lineToDelete, index) {
             if (!confirm(`Yakin ingin menghapus link #${index + 1}?`)) return;
 
-            const btn = document.querySelector(`#linkList .link-item[data-index="${index}"] .btn-delete`);
-            if (btn) {
-                btn.textContent = '⏳';
-                btn.disabled = true;
+            // Cari tombol hapus yang sesuai
+            const btns = document.querySelectorAll('.btn-delete');
+            let targetBtn = null;
+            btns.forEach(btn => {
+                if (btn.getAttribute('data-index') == index) {
+                    targetBtn = btn;
+                }
+            });
+
+            if (targetBtn) {
+                targetBtn.textContent = '⏳';
+                targetBtn.disabled = true;
             }
 
             try {
@@ -805,9 +814,9 @@
 
                 if (filtered.length === lines.length) {
                     showAlert('error', '❌ Link tidak ditemukan!');
-                    if (btn) {
-                        btn.textContent = '🗑️';
-                        btn.disabled = false;
+                    if (targetBtn) {
+                        targetBtn.textContent = '🗑️';
+                        targetBtn.disabled = false;
                     }
                     return;
                 }
@@ -821,14 +830,14 @@
             } catch (error) {
                 showAlert('error', `❌ Gagal menghapus: ${error.message}`);
                 console.error('Error:', error);
-                if (btn) {
-                    btn.textContent = '🗑️';
-                    btn.disabled = false;
+                if (targetBtn) {
+                    targetBtn.textContent = '🗑️';
+                    targetBtn.disabled = false;
                 }
             }
         }
 
-        // ===== LOAD LINKS =====
+        // ===== LOAD LINKS (DIPERBAIKI) =====
         async function loadLinks() {
             const listContainer = document.getElementById('linkList');
             listContainer.innerHTML = '<div style="text-align:center; color:#6b7280; padding:20px;">⏳ Memuat data...</div>';
@@ -850,23 +859,26 @@
                 let html = '';
                 lines.forEach((line, index) => {
                     const extracted = extractLinkFromHtml(line);
-                    if (extracted) {
-                        html += `
-                            <div class="link-item" data-index="${index}">
-                                <div class="link-text">
-                                    <div>
-                                        <span class="link-index">#${index + 1}</span>
-                                        <a href="${extracted.url}" target="_blank">${extracted.anchor}</a>
-                                    </div>
-                                    <div class="url-text">${extracted.url}</div>
+                    // Escape HTML untuk aman
+                    const escapedLine = line.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const anchorText = extracted ? extracted.anchor : 'Link';
+                    const urlText = extracted ? extracted.url : '#';
+
+                    html += `
+                        <div class="link-item" data-index="${index}">
+                            <div class="link-text">
+                                <div>
+                                    <span class="link-index">#${index + 1}</span>
+                                    <a href="${urlText}" target="_blank">${anchorText}</a>
                                 </div>
-                                <div class="link-actions">
-                                    <button class="btn btn-secondary btn-sm" onclick="copyLink('${escapeHtml(line)}')">📋</button>
-                                    <button class="btn btn-danger btn-sm btn-delete" onclick="deleteLinkFromList('${escapeHtml(line)}', ${index})">🗑️</button>
-                                </div>
+                                <div class="url-text">${urlText}</div>
                             </div>
-                        `;
-                    }
+                            <div class="link-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="copyLink('${escapedLine}')">📋</button>
+                                <button class="btn btn-danger btn-sm btn-delete" data-index="${index}" onclick="deleteLinkFromList('${escapedLine}', ${index})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
                 });
 
                 listContainer.innerHTML = html;
@@ -879,16 +891,25 @@
         function copyLink(link) {
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('success', '✅ Link copied!');
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = link;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showAlert('success', '✅ Link copied!');
             });
         }
 
         function copyAllLinks() {
             const listContainer = document.getElementById('linkList');
-            const links = listContainer.querySelectorAll('.link-item .link-text');
+            const items = listContainer.querySelectorAll('.link-item');
             let text = '';
-            links.forEach(link => {
-                const anchor = link.querySelector('a')?.textContent || '';
-                const url = link.querySelector('.url-text')?.textContent || '';
+            items.forEach(item => {
+                const anchor = item.querySelector('.link-text a')?.textContent || '';
+                const url = item.querySelector('.url-text')?.textContent || '';
                 if (anchor && url) {
                     text += `${anchor}: ${url}\n`;
                 }
