@@ -24,29 +24,28 @@ jobs:
         run: |
           echo "📥 Mengambil data dari Issues..."
           
+          # Ambil semua issue dengan label backlink yang terbuka
           ISSUES=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/issues?labels=backlink&state=open&per_page=100")
           
-          ISSUE_COUNT=$(echo "$ISSUES" | grep -o '"title"' | wc -l)
+          echo "📝 Issue yang ditemukan:"
+          echo "$ISSUES" | grep -o '"title":"[^"]*"' || echo "Tidak ada issue"
           
-          if [ "$ISSUE_COUNT" -gt 0 ]; then
-            echo "📝 Ditemukan $ISSUE_COUNT issue dengan label backlink"
-            
-            echo '<div class="sponsor-area" style="position:absolute; left:-9999px;">' > bl.txt
-            
-            echo "$ISSUES" | grep -oP '(?<=<a href=")[^"]*' | while read -r link; do
-              if [ -n "$link" ]; then
-                echo "<a href=\"$link\" rel=\"dofollow\">$link</a><br>" >> bl.txt
-              fi
-            done
-            
-            echo '</div>' >> bl.txt
-            
-          else
-            echo "ℹ️ Tidak ada issue dengan label backlink"
-            echo '<div class="sponsor-area" style="position:absolute; left:-9999px;">' > bl.txt
-            echo '</div>' >> bl.txt
-          fi
+          # Ekstrak link dari body issue
+          echo '<div class="sponsor-area" style="position:absolute; left:-9999px;">' > bl.txt
+          
+          # Cari semua tag <a> di body issue
+          echo "$ISSUES" | grep -oP '(?<=<a href=")[^"]*' | while read -r url; do
+            if [ -n "$url" ]; then
+              echo "🔗 Menambahkan link: $url"
+              echo "<a href=\"$url\" rel=\"dofollow\">$url</a><br>" >> bl.txt
+            fi
+          done
+          
+          echo '</div>' >> bl.txt
+          
+          echo "✅ Isi bl.txt:"
+          cat bl.txt
           
       - name: Commit perubahan
         uses: stefanzweifel/git-auto-commit-action@v4
