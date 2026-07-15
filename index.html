@@ -619,21 +619,23 @@
             }
 
             const issueTitle = `Backlink: ${linkTexts.join(', ')}`;
-            const issueBody = `## 📌 Link Baru\n\n${links.join('\n')}\n\n---\n*Dikirim dari Backlink Manager*`;
+            const issueBody = `## 📌 Link Baru\n\n${links.join('\n')}\n\n---\n*Dikirim dari Backlink Manager*\n\n---\n\n**📌 JANGAN LUPA:**\n1. Di bagian kanan, klik **"Labels"**\n2. Pilih label **"backlink"**\n3. Baru klik **"Create"**`;
 
             document.getElementById('previewContent').textContent = issueBody;
             document.getElementById('previewSection').style.display = 'block';
 
             window._issueData = {
                 title: issueTitle,
-                body: issueBody,
-                labels: 'backlink'
+                body: issueBody
             };
 
-            showAlert('success', `
-                ✅ Berhasil membuat ${links.length} link!<br>
-                📋 Klik <strong>"Buka Issue Baru"</strong> untuk melanjutkan ke GitHub
-            `, 8000);
+            showAlert('warning', `
+                ⚠️ <strong>PENTING!</strong><br>
+                Setelah halaman issue terbuka:<br>
+                1. Di bagian kanan, klik <strong>"Labels"</strong><br>
+                2. Pilih label <strong>"backlink"</strong><br>
+                3. Klik <strong>"Create"</strong>
+            `, 10000);
 
             document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
             return false;
@@ -646,9 +648,13 @@
                 return;
             }
 
-            const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(data.title)}&body=${encodeURIComponent(data.body)}&labels=${data.labels}`;
+            const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(data.title)}&body=${encodeURIComponent(data.body)}`;
             window.open(url, '_blank');
-            showAlert('info', '📝 Halaman Issue terbuka. Klik "Submit new issue" untuk menyimpan.', 5000);
+            
+            showAlert('info', `
+                📝 Halaman Issue terbuka.<br>
+                <strong>JANGAN LUPA:</strong> Pilih label <strong>"backlink"</strong> di bagian kanan!
+            `, 8000);
         }
 
         function copyPreview() {
@@ -693,21 +699,23 @@
             }
 
             const issueTitle = `Hapus Backlink: ${query.substring(0, 50)}...`;
-            const issueBody = `## 🗑️ Hapus Link\n\n**Link yang akan dihapus:**\n\n\`\`\`html\n${query}\n\`\`\`\n\n**Alasan:** ${reason || 'Tidak disebutkan'}\n\n---\n*Dikirim dari Backlink Manager*`;
+            const issueBody = `## 🗑️ Hapus Link\n\n**Link yang akan dihapus:**\n\n\`\`\`html\n${query}\n\`\`\`\n\n**Alasan:** ${reason || 'Tidak disebutkan'}\n\n---\n*Dikirim dari Backlink Manager*\n\n---\n\n**📌 JANGAN LUPA:**\n1. Di bagian kanan, klik **"Labels"**\n2. Pilih label **"delete-backlink"**\n3. Baru klik **"Create"**`;
 
             document.getElementById('previewDeleteContent').textContent = issueBody;
             document.getElementById('previewDeleteSection').style.display = 'block';
 
             window._deleteData = {
                 title: issueTitle,
-                body: issueBody,
-                labels: 'delete-backlink'
+                body: issueBody
             };
 
             showAlert('warning', `
-                ⚠️ Issue hapus akan dibuat!<br>
-                📋 Klik <strong>"Buka Issue Hapus"</strong> untuk melanjutkan
-            `, 8000);
+                ⚠️ <strong>PENTING!</strong><br>
+                Setelah halaman issue terbuka:<br>
+                1. Di bagian kanan, klik <strong>"Labels"</strong><br>
+                2. Pilih label <strong>"delete-backlink"</strong><br>
+                3. Klik <strong>"Create"</strong>
+            `, 10000);
 
             document.getElementById('previewDeleteSection').scrollIntoView({ behavior: 'smooth' });
             return false;
@@ -720,9 +728,13 @@
                 return;
             }
 
-            const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(data.title)}&body=${encodeURIComponent(data.body)}&labels=${data.labels}`;
+            const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(data.title)}&body=${encodeURIComponent(data.body)}`;
             window.open(url, '_blank');
-            showAlert('info', '📝 Halaman Issue terbuka. Klik "Submit new issue" untuk menghapus.', 5000);
+            
+            showAlert('info', `
+                📝 Halaman Issue terbuka.<br>
+                <strong>JANGAN LUPA:</strong> Pilih label <strong>"delete-backlink"</strong> di bagian kanan!
+            `, 8000);
         }
 
         function copyDeletePreview() {
@@ -846,6 +858,7 @@
         console.log('🔗 Backlink Manager with Delete siap!');
         console.log('📁 Repository: superkencang/backlink');
         console.log('💡 Tips: Gunakan Ctrl+Enter untuk submit cepat');
+        console.log('⚠️ JANGAN LUPA pilih label "backlink" atau "delete-backlink" saat membuat issue!');
 
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(loadLinks, 1000);
