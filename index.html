@@ -150,6 +150,12 @@
             background: #d1d5db;
         }
 
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
         .btn-group {
             display: flex;
             gap: 10px;
@@ -239,19 +245,82 @@
             font-weight: bold;
         }
 
-        .code-preview {
-            background: #1a1a2e;
-            color: #e1e5eb;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-            margin: 10px 0;
-            max-height: 150px;
+        .token-input {
+            background: #fff8e1;
+            border-color: #ffd54f !important;
+        }
+
+        .token-input:focus {
+            border-color: #ffb300 !important;
+            box-shadow: 0 0 0 4px rgba(255, 179, 0, 0.1) !important;
+        }
+
+        .link-list {
+            max-height: 450px;
             overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        .link-item {
+            padding: 10px 14px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #e1e5eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            word-break: break-all;
+            transition: all 0.2s;
+        }
+
+        .link-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .link-item .link-text {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .link-item .link-text a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .link-item .link-text a:hover {
+            text-decoration: underline;
+        }
+
+        .link-item .link-text .url-text {
+            color: #6b7280;
+            font-size: 11px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .link-item .link-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .link-item .link-actions button {
+            padding: 4px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+        }
+
+        .link-item .link-index {
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 30px;
         }
 
         .footer {
@@ -266,53 +335,55 @@
             text-decoration: none;
         }
 
-        .link-list {
-            max-height: 350px;
-            overflow-y: auto;
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 10px;
-        }
-
-        .link-item {
-            padding: 8px 12px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            font-size: 13px;
-            border: 1px solid #e1e5eb;
+        .tab-buttons {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             gap: 10px;
-            word-break: break-all;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e1e5eb;
+            padding-bottom: 10px;
         }
 
-        .link-item .link-text {
-            flex: 1;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
 
-        .link-item .link-actions {
-            display: flex;
-            gap: 6px;
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
         }
 
-        .link-item .link-actions button {
-            padding: 4px 10px;
-            font-size: 11px;
-            border-radius: 6px;
+        .tab-btn:hover:not(.active) {
+            background: #f0f2f5;
         }
 
-        .token-input {
-            background: #fff8e1;
-            border-color: #ffd54f !important;
+        .tab-content {
+            display: none;
         }
 
-        .token-input:focus {
-            border-color: #ffb300 !important;
-            box-shadow: 0 0 0 4px rgba(255, 179, 0, 0.1) !important;
+        .tab-content.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e1e5eb;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @media (max-width: 480px) {
@@ -339,6 +410,10 @@
 
             .link-item .link-actions {
                 justify-content: flex-end;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -374,63 +449,55 @@
 
             <hr class="divider">
 
-            <!-- Form Tambah -->
-            <form id="linkForm" onsubmit="return addLink(event)">
-                <div class="form-group">
-                    <label for="url">URL / HREF</label>
-                    <input type="text" id="url" placeholder="https://contoh.com/" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="anchor">Anchor Text (opsional)</label>
-                    <input type="text" id="anchor" placeholder="Kosong = pakai URL">
-                </div>
-
-                <div class="form-group">
-                    <label for="bulk">Atau tambah banyak (1 per baris)</label>
-                    <textarea id="bulk" placeholder="https://contoh1.com&#10;https://contoh2.com&#10;/path-contoh"></textarea>
-                </div>
-
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-success">🚀 Tambahkan ke bl.txt</button>
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Tab: Hapus -->
-        <div class="card">
-            <h3 style="margin-bottom:16px;">🗑️ Hapus Link</h3>
-            <div class="alert alert-info show" style="display:block; margin-bottom:16px;">
-                💡 <strong>Cara Hapus:</strong> Tempel 1 baris HTML lengkap yang sama persis dengan isi bl.txt
+            <!-- Tab Navigation -->
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('add')">➕ Tambah</button>
+                <button class="tab-btn" onclick="switchTab('list')">📋 Daftar Link</button>
             </div>
 
-            <form id="deleteForm" onsubmit="return deleteLink(event)">
-                <div class="form-group">
-                    <label for="deleteQuery">Baris HTML yang akan dihapus</label>
-                    <input type="text" id="deleteQuery" placeholder='Contoh: <a href="https://contoh.com/" rel="dofollow">anchor</a><br>'>
-                </div>
+            <!-- TAB: Tambah -->
+            <div id="tab-add" class="tab-content active">
+                <form id="linkForm" onsubmit="return addLink(event)">
+                    <div class="form-group">
+                        <label for="url">URL / HREF</label>
+                        <input type="text" id="url" placeholder="https://contoh.com/" required>
+                    </div>
 
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-danger">🗑️ Hapus dari bl.txt</button>
-                    <button type="button" class="btn btn-secondary" onclick="resetDelete()">🔄 Reset</button>
-                </div>
-            </form>
-        </div>
+                    <div class="form-group">
+                        <label for="anchor">Anchor Text (opsional)</label>
+                        <input type="text" id="anchor" placeholder="Kosong = pakai URL">
+                    </div>
 
-        <!-- Tab: Daftar Link -->
-        <div class="card">
-            <h3 style="margin-bottom:16px;">📋 Daftar Link <span id="totalLinks" style="font-size:14px; color:#6b7280;">(0)</span></h3>
-            <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
-                <button class="btn btn-primary" onclick="loadLinks()">🔄 Refresh</button>
-                <button class="btn btn-secondary" onclick="window.open('https://superkencang.github.io/backlink/bl.txt', '_blank')">
-                    📄 Lihat bl.txt
-                </button>
-                <button class="btn btn-secondary" onclick="copyAllLinks()">📋 Copy Semua</button>
+                    <div class="form-group">
+                        <label for="bulk">Atau tambah banyak (1 per baris)</label>
+                        <textarea id="bulk" placeholder="https://contoh1.com&#10;https://contoh2.com&#10;/path-contoh"></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-success">🚀 Tambahkan ke bl.txt</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
+                    </div>
+                </form>
             </div>
-            <div class="link-list" id="linkList">
-                <div style="text-align:center; color:#6b7280; padding:20px;">
-                    🔄 Klik "Refresh" untuk melihat daftar link
+
+            <!-- TAB: Daftar Link -->
+            <div id="tab-list" class="tab-content">
+                <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+                    <button class="btn btn-primary" onclick="loadLinks()">🔄 Refresh</button>
+                    <button class="btn btn-secondary" onclick="window.open('https://superkencang.github.io/backlink/bl.txt', '_blank')">
+                        📄 Lihat bl.txt
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyAllLinks()">📋 Copy Semua</button>
+                </div>
+                <div id="linkListContainer">
+                    <div class="link-list" id="linkList">
+                        <div style="text-align:center; color:#6b7280; padding:20px;">
+                            🔄 Klik "Refresh" untuk melihat daftar link
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; font-size:13px; color:#6b7280;">
+                    Total: <span id="totalLinks">0</span> link
                 </div>
             </div>
         </div>
@@ -442,7 +509,7 @@
                 <ul>
                     <li><strong>Simpan Token:</strong> Masukkan token GitHub sekali saja (tersimpan di browser)</li>
                     <li><strong>Tambah:</strong> Isi URL → klik "Tambahkan ke bl.txt" → LANGSUNG MASUK!</li>
-                    <li><strong>Hapus:</strong> Tempel HTML lengkap → klik "Hapus dari bl.txt"</li>
+                    <li><strong>Hapus:</strong> Di tab "Daftar Link", klik tombol <strong>🗑️ Hapus</strong> pada link yang ingin dihapus</li>
                     <li><strong>Hasil:</strong> <a href="https://superkencang.github.io/backlink/bl.txt" target="_blank">superkencang.github.io/backlink/bl.txt</a></li>
                 </ul>
             </div>
@@ -538,6 +605,23 @@
                 return { url: match[1], anchor: match[2] };
             }
             return null;
+        }
+
+        // ===== SWITCH TAB =====
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.textContent.includes(tab === 'add' ? 'Tambah' : 'Daftar')) {
+                    btn.classList.add('active');
+                }
+            });
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            if (tab === 'list') {
+                loadLinks();
+            }
         }
 
         // ===== GitHub API =====
@@ -669,32 +753,25 @@
                 return;
             }
 
-            // Tampilkan loading
             const submitBtn = document.querySelector('#linkForm button[type="submit"]');
             const originalText = submitBtn.textContent;
             submitBtn.textContent = '⏳ Menyimpan...';
             submitBtn.disabled = true;
 
             try {
-                // Ambil file saat ini
                 const { content, sha } = await fetchFileContent();
                 const existingLines = parseContent(content);
-
-                // Gabungkan
                 const allLines = [...existingLines, ...newLinks];
                 const newContent = buildContent(allLines);
 
-                // Simpan
                 await updateFileContent(newContent, sha);
 
                 showAlert('success', `✅ Berhasil menambahkan ${newLinks.length} link ke bl.txt!`);
 
-                // Reset form
                 document.getElementById('url').value = '';
                 document.getElementById('anchor').value = '';
                 document.getElementById('bulk').value = '';
 
-                // Refresh daftar link
                 setTimeout(loadLinks, 1000);
 
             } catch (error) {
@@ -706,63 +783,50 @@
             }
         }
 
-        // ===== DELETE LINK =====
-        async function deleteLink(event) {
-            event.preventDefault();
-
+        // ===== DELETE LINK (dari daftar) =====
+        async function deleteLinkFromList(lineToDelete, index) {
             const token = getToken();
             if (!token) {
-                showAlert('error', '❌ Simpan token GitHub terlebih dahulu!');
-                document.getElementById('githubToken').focus();
+                showAlert('error', '❌ Token tidak ditemukan!');
                 return;
             }
 
-            const query = document.getElementById('deleteQuery').value.trim();
+            if (!confirm(`Yakin ingin menghapus link #${index + 1}?`)) return;
 
-            if (!query) {
-                showAlert('error', '❌ Masukkan baris HTML yang akan dihapus!');
-                return;
+            const btn = document.querySelector(`#linkList .link-item[data-index="${index}"] .btn-delete`);
+            if (btn) {
+                btn.textContent = '⏳';
+                btn.disabled = true;
             }
-
-            if (!query.includes('<a href=') || !query.includes('</a>')) {
-                showAlert('error', '❌ Format tidak valid! Gunakan format: <a href="url" rel="dofollow">anchor</a><br>');
-                return;
-            }
-
-            if (!confirm('Yakin ingin menghapus link ini?')) return;
-
-            const deleteBtn = document.querySelector('#deleteForm button[type="submit"]');
-            const originalText = deleteBtn.textContent;
-            deleteBtn.textContent = '⏳ Menghapus...';
-            deleteBtn.disabled = true;
 
             try {
                 const { content, sha } = await fetchFileContent();
                 const lines = parseContent(content);
 
-                const filtered = lines.filter(line => line !== query);
+                const filtered = lines.filter(line => line !== lineToDelete);
 
                 if (filtered.length === lines.length) {
-                    showAlert('error', '❌ Tidak ditemukan baris yang cocok!');
-                    deleteBtn.textContent = originalText;
-                    deleteBtn.disabled = false;
+                    showAlert('error', '❌ Link tidak ditemukan!');
+                    if (btn) {
+                        btn.textContent = '🗑️';
+                        btn.disabled = false;
+                    }
                     return;
                 }
 
                 const newContent = buildContent(filtered);
                 await updateFileContent(newContent, sha);
 
-                showAlert('success', `✅ Berhasil menghapus ${lines.length - filtered.length} link!`);
-                document.getElementById('deleteQuery').value = '';
-
-                setTimeout(loadLinks, 1000);
+                showAlert('success', `✅ Berhasil menghapus link #${index + 1}!`);
+                loadLinks();
 
             } catch (error) {
                 showAlert('error', `❌ Gagal menghapus: ${error.message}`);
                 console.error('Error:', error);
-            } finally {
-                deleteBtn.textContent = originalText;
-                deleteBtn.disabled = false;
+                if (btn) {
+                    btn.textContent = '🗑️';
+                    btn.disabled = false;
+                }
             }
         }
 
@@ -778,9 +842,10 @@
                 const text = await response.text();
                 const lines = parseContent(text);
 
+                document.getElementById('totalLinks').textContent = lines.length;
+
                 if (lines.length === 0) {
                     listContainer.innerHTML = '<div style="text-align:center; color:#6b7280; padding:20px;">📭 Belum ada link</div>';
-                    document.getElementById('totalLinks').textContent = '(0)';
                     return;
                 }
 
@@ -789,17 +854,17 @@
                     const extracted = extractLinkFromHtml(line);
                     if (extracted) {
                         html += `
-                            <div class="link-item">
+                            <div class="link-item" data-index="${index}">
                                 <div class="link-text">
-                                    <strong>${index + 1}.</strong> 
-                                    <a href="${extracted.url}" target="_blank" style="color:#667eea;text-decoration:none;">
-                                        ${extracted.anchor}
-                                    </a>
-                                    <span style="color:#6b7280;font-size:11px;">(${extracted.url})</span>
+                                    <div>
+                                        <span class="link-index">#${index + 1}</span>
+                                        <a href="${extracted.url}" target="_blank">${extracted.anchor}</a>
+                                    </div>
+                                    <div class="url-text">${extracted.url}</div>
                                 </div>
                                 <div class="link-actions">
-                                    <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="copyLink('${escapeHtml(line)}')">📋</button>
-                                    <button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="prepareDelete('${escapeHtml(line)}')">🗑️</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="copyLink('${escapeHtml(line)}')">📋</button>
+                                    <button class="btn btn-danger btn-sm btn-delete" onclick="deleteLinkFromList('${escapeHtml(line)}', ${index})">🗑️</button>
                                 </div>
                             </div>
                         `;
@@ -807,7 +872,6 @@
                 });
 
                 listContainer.innerHTML = html;
-                document.getElementById('totalLinks').textContent = `(${lines.length})`;
 
             } catch (error) {
                 listContainer.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Error: ${error.message}</div>`;
@@ -820,19 +884,13 @@
             });
         }
 
-        function prepareDelete(link) {
-            document.getElementById('deleteQuery').value = link;
-            showAlert('info', '📋 Link sudah diisi di form hapus. Klik "Hapus dari bl.txt" untuk melanjutkan.', 5000);
-            document.getElementById('deleteQuery').scrollIntoView({ behavior: 'smooth' });
-        }
-
         function copyAllLinks() {
             const listContainer = document.getElementById('linkList');
             const links = listContainer.querySelectorAll('.link-item .link-text');
             let text = '';
             links.forEach(link => {
                 const anchor = link.querySelector('a')?.textContent || '';
-                const url = link.querySelector('span')?.textContent?.replace(/[()]/g, '') || '';
+                const url = link.querySelector('.url-text')?.textContent || '';
                 if (anchor && url) {
                     text += `${anchor}: ${url}\n`;
                 }
@@ -850,11 +908,6 @@
             document.getElementById('url').value = '';
             document.getElementById('anchor').value = '';
             document.getElementById('bulk').value = '';
-            document.getElementById('alert').className = 'alert';
-        }
-
-        function resetDelete() {
-            document.getElementById('deleteQuery').value = '';
             document.getElementById('alert').className = 'alert';
         }
 
@@ -882,6 +935,7 @@
         console.log('📁 Repository: superkencang/backlink');
         console.log('✅ Token disimpan di localStorage');
         console.log('💡 Tips: Ctrl+Enter untuk submit cepat');
+        console.log('🗑️ Klik tombol hapus di daftar link untuk menghapus!');
     </script>
 
 </body>
