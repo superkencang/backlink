@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backlink Manager - Simple</title>
+    <title>Backlink Manager - Final</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,7 @@
         }
 
         .container {
-            max-width: 700px;
+            max-width: 750px;
             width: 100%;
             margin: 0 auto;
         }
@@ -134,6 +134,12 @@
             color: white;
         }
         .btn-danger:hover { background: #dc2626; box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4); }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn-warning:hover { background: #d97706; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4); }
 
         .btn-secondary {
             background: #e1e5eb;
@@ -262,6 +268,7 @@
             margin-bottom: 20px;
             border-bottom: 2px solid #e1e5eb;
             padding-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
@@ -306,6 +313,25 @@
             color: #1a1a2e;
         }
 
+        .method-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid #667eea;
+        }
+
+        .method-box .method-title {
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .method-box .method-desc {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
         @media (max-width: 480px) {
             .card { padding: 20px; }
             .header h1 { font-size: 22px; }
@@ -325,7 +351,7 @@
         <div class="card">
             <div class="header">
                 <h1>🔗 Backlink Manager</h1>
-                <div class="subtitle">Tambah & Hapus Link — Token Manual</div>
+                <div class="subtitle">Tambah & Hapus Link — PASTI BISA!</div>
                 <div class="badge">📁 superkencang/backlink/bl.txt</div>
             </div>
 
@@ -379,19 +405,37 @@
             <!-- TAB: Hapus -->
             <div id="tab-delete" class="tab-content">
                 <div class="info-box">
-                    💡 <strong>Cara Hapus:</strong> Tempel 1 baris HTML lengkap yang sama persis dengan isi bl.txt
+                    💡 <strong>Pilih salah satu metode di bawah ini untuk menghapus link:</strong>
                 </div>
 
-                <form id="deleteForm" onsubmit="return deleteLink(event)">
-                    <div class="form-group">
-                        <label for="deleteQuery">Baris HTML yang akan dihapus</label>
-                        <textarea id="deleteQuery" rows="3" placeholder='Contoh: <a href="https://contoh.com/" rel="dofollow">anchor</a><br>'></textarea>
-                    </div>
+                <!-- METODE 1: Hapus dengan URL -->
+                <div class="method-box" style="border-left-color: #10b981;">
+                    <div class="method-title">📌 Metode 1: Hapus dengan URL</div>
+                    <div class="method-desc">Masukkan URL saja — akan menghapus semua link dengan URL yang sama</div>
+                </div>
 
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-danger">🗑️ Hapus dari bl.txt</button>
-                        <button type="button" class="btn btn-secondary" onclick="resetDelete()">🔄 Reset</button>
+                <form id="deleteByUrlForm" onsubmit="return deleteByUrl(event)">
+                    <div class="form-group">
+                        <label for="deleteUrl">URL yang akan dihapus</label>
+                        <input type="text" id="deleteUrl" placeholder="https://studycue.org/">
                     </div>
+                    <button type="submit" class="btn btn-warning" style="width:100%;">🗑️ Hapus Semua Link dengan URL Ini</button>
+                </form>
+
+                <div style="margin: 20px 0; text-align:center; color:#6b7280;">— ATAU —</div>
+
+                <!-- METODE 2: Hapus dengan HTML Lengkap -->
+                <div class="method-box" style="border-left-color: #ef4444;">
+                    <div class="method-title">📌 Metode 2: Hapus dengan HTML Lengkap</div>
+                    <div class="method-desc">Tempel 1 baris HTML lengkap — akan menghapus yang sama persis</div>
+                </div>
+
+                <form id="deleteByHtmlForm" onsubmit="return deleteByHtml(event)">
+                    <div class="form-group">
+                        <label for="deleteHtml">Baris HTML yang akan dihapus</label>
+                        <textarea id="deleteHtml" rows="3" placeholder='Contoh: <a href="https://contoh.com/"rel="dofollow">anchor</a><br>'></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger" style="width:100%;">🗑️ Hapus HTML Ini</button>
                 </form>
 
                 <div id="deleteResult" style="margin-top:16px;"></div>
@@ -424,7 +468,8 @@
                 <ul style="list-style:none; padding:0; font-size:13px; color:#4a4a6a;">
                     <li style="padding:4px 0; padding-left:20px; position:relative;">• <strong>Simpan Token:</strong> Masukkan token GitHub sekali saja</li>
                     <li style="padding:4px 0; padding-left:20px; position:relative;">• <strong>Tambah:</strong> Isi URL → klik "Tambahkan" → LANGSUNG MASUK!</li>
-                    <li style="padding:4px 0; padding-left:20px; position:relative;">• <strong>Hapus:</strong> Tempel HTML lengkap → klik "Hapus" → LANGSUNG TERHAPUS!</li>
+                    <li style="padding:4px 0; padding-left:20px; position:relative;">• <strong>Hapus via URL:</strong> Masukkan URL → klik "Hapus" → SEMUA LINK DENGAN URL ITU TERHAPUS!</li>
+                    <li style="padding:4px 0; padding-left:20px; position:relative;">• <strong>Hapus via HTML:</strong> Tempel HTML lengkap → klik "Hapus" → HAPUS YANG SAMA PERSIS!</li>
                     <li style="padding:4px 0; padding-left:20px; position:relative;">• <strong>Hasil:</strong> <a href="https://superkencang.github.io/backlink/bl.txt" target="_blank">superkencang.github.io/backlink/bl.txt</a></li>
                 </ul>
             </div>
@@ -667,8 +712,8 @@
             }
         }
 
-        // ===== DELETE LINK =====
-        async function deleteLink(event) {
+        // ===== DELETE BY URL (METODE 1) =====
+        async function deleteByUrl(event) {
             event.preventDefault();
 
             const token = getToken();
@@ -678,57 +723,122 @@
                 return;
             }
 
-            const query = document.getElementById('deleteQuery').value.trim();
+            const url = document.getElementById('deleteUrl').value.trim();
 
-            if (!query) {
-                showAlert('error', '❌ Masukkan baris HTML yang akan dihapus!');
+            if (!url) {
+                showAlert('error', '❌ Masukkan URL yang akan dihapus!');
                 return;
             }
 
-            if (!query.includes('<a href=') || !query.includes('</a>')) {
-                showAlert('error', '❌ Format tidak valid! Gunakan format: <a href="url" rel="dofollow">anchor</a><br>');
-                return;
-            }
+            if (!confirm(`Yakin ingin menghapus SEMUA link dengan URL: ${url}?`)) return;
 
-            if (!confirm('Yakin ingin menghapus link ini?')) return;
-
-            const deleteBtn = document.querySelector('#deleteForm button[type="submit"]');
-            const originalText = deleteBtn.textContent;
-            deleteBtn.textContent = '⏳ Menghapus...';
-            deleteBtn.disabled = true;
+            const btn = document.querySelector('#deleteByUrlForm button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Menghapus...';
+            btn.disabled = true;
 
             try {
                 const { content, sha } = await fetchFileContent();
                 const lines = parseContent(content);
 
-                // Cari yang cocok (exact match)
-                const filtered = lines.filter(line => line === query);
+                // Cari semua link yang URL-nya mengandung URL yang dicari
+                let deletedCount = 0;
+                const filtered = lines.filter(line => {
+                    const extracted = extractLinkFromHtml(line);
+                    if (extracted && extracted.url.includes(url)) {
+                        deletedCount++;
+                        return false;
+                    }
+                    return true;
+                });
 
-                if (filtered.length === 0) {
-                    showAlert('error', '❌ Tidak ditemukan baris yang cocok persis!');
-                    deleteBtn.textContent = originalText;
-                    deleteBtn.disabled = false;
+                if (deletedCount === 0) {
+                    showAlert('error', '❌ Tidak ditemukan link dengan URL tersebut!');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
                     return;
                 }
 
-                // Hapus semua yang cocok
-                const newLines = lines.filter(line => line !== query);
-                const newContent = buildContent(newLines);
-
+                const newContent = buildContent(filtered);
                 await updateFileContent(newContent, sha);
 
-                showAlert('success', `✅ Berhasil menghapus ${filtered.length} link!`);
-                document.getElementById('deleteQuery').value = '';
-
-                // Refresh daftar link
+                showAlert('success', `✅ Berhasil menghapus ${deletedCount} link!`);
+                document.getElementById('deleteUrl').value = '';
                 setTimeout(loadLinks, 1000);
 
             } catch (error) {
                 showAlert('error', `❌ Gagal menghapus: ${error.message}`);
                 console.error('Error:', error);
             } finally {
-                deleteBtn.textContent = originalText;
-                deleteBtn.disabled = false;
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ===== DELETE BY HTML (METODE 2) =====
+        async function deleteByHtml(event) {
+            event.preventDefault();
+
+            const token = getToken();
+            if (!token) {
+                showAlert('error', '❌ Simpan token GitHub terlebih dahulu!');
+                document.getElementById('githubToken').focus();
+                return;
+            }
+
+            const html = document.getElementById('deleteHtml').value.trim();
+
+            if (!html) {
+                showAlert('error', '❌ Masukkan baris HTML yang akan dihapus!');
+                return;
+            }
+
+            if (!html.includes('<a href=') || !html.includes('</a>')) {
+                showAlert('error', '❌ Format tidak valid! Gunakan format: <a href="url" rel="dofollow">anchor</a><br>');
+                return;
+            }
+
+            if (!confirm('Yakin ingin menghapus link ini?')) return;
+
+            const btn = document.querySelector('#deleteByHtmlForm button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Menghapus...';
+            btn.disabled = true;
+
+            try {
+                const { content, sha } = await fetchFileContent();
+                const lines = parseContent(content);
+
+                // Cari yang sama persis
+                let deletedCount = 0;
+                const filtered = lines.filter(line => {
+                    if (line === html) {
+                        deletedCount++;
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (deletedCount === 0) {
+                    showAlert('error', '❌ Tidak ditemukan baris HTML yang sama persis!');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                const newContent = buildContent(filtered);
+                await updateFileContent(newContent, sha);
+
+                showAlert('success', `✅ Berhasil menghapus ${deletedCount} link!`);
+                document.getElementById('deleteHtml').value = '';
+                setTimeout(loadLinks, 1000);
+
+            } catch (error) {
+                showAlert('error', `❌ Gagal menghapus: ${error.message}`);
+                console.error('Error:', error);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
             }
         }
 
@@ -767,7 +877,8 @@
                             </div>
                             <div class="link-actions">
                                 <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="copyLink('${escapedLine}')">📋</button>
-                                <button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="prepareDelete('${escapedLine}')">🗑️</button>
+                                <button class="btn btn-warning" style="padding:4px 10px;font-size:11px;" onclick="prepareDeleteByUrl('${urlText}')">🔗</button>
+                                <button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="prepareDeleteByHtml('${escapedLine}')">🗑️</button>
                             </div>
                         </div>
                     `;
@@ -794,11 +905,18 @@
             });
         }
 
-        function prepareDelete(link) {
+        function prepareDeleteByUrl(url) {
             switchTab('delete');
-            document.getElementById('deleteQuery').value = link;
-            showAlert('info', '📋 Link sudah diisi di form hapus. Klik "Hapus dari bl.txt" untuk melanjutkan.', 5000);
-            document.getElementById('deleteQuery').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('deleteUrl').value = url;
+            showAlert('info', `📋 URL "${url}" sudah diisi. Klik "Hapus Semua Link dengan URL Ini" untuk menghapus.`, 5000);
+            document.getElementById('deleteUrl').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function prepareDeleteByHtml(html) {
+            switchTab('delete');
+            document.getElementById('deleteHtml').value = html;
+            showAlert('info', '📋 HTML sudah diisi. Klik "Hapus HTML Ini" untuk menghapus.', 5000);
+            document.getElementById('deleteHtml').scrollIntoView({ behavior: 'smooth' });
         }
 
         function copyAllLinks() {
@@ -826,12 +944,6 @@
             document.getElementById('alert').className = 'alert';
         }
 
-        function resetDelete() {
-            document.getElementById('deleteQuery').value = '';
-            document.getElementById('alert').className = 'alert';
-            document.getElementById('deleteResult').innerHTML = '';
-        }
-
         // ===== KEYBOARD SHORTCUT =====
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 'Enter') {
@@ -855,9 +967,10 @@
             showTokenStatus('info', 'ℹ️ Masukkan token GitHub untuk mulai.');
         }
 
-        console.log('🔗 Backlink Manager - Simple siap!');
+        console.log('🔗 Backlink Manager - Final siap!');
         console.log('📁 Repository: superkencang/backlink');
         console.log('💡 Tips: Ctrl+Enter untuk submit cepat');
+        console.log('🗑️ 2 Metode Hapus: URL atau HTML lengkap');
     </script>
 
 </body>
