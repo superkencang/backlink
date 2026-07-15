@@ -1,3 +1,2 @@
 <div class="sponsor-area" style="position:absolute; left:-9999px;">
-<a href="https://test.com" rel="dofollow">https://test.com</a><br>
 </div>
