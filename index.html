@@ -1,464 +1,84 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backlink Manager - Tanpa API</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 24px;
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            color: #1a1a2e;
-            margin-bottom: 8px;
-        }
-
-        .header .subtitle {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            color: #1a1a2e;
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e1e5eb;
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s;
-            background: #fafbfc;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: #e1e5eb;
-            color: #1a1a2e;
-        }
-
-        .btn-secondary:hover {
-            background: #d1d5db;
-            box-shadow: none;
-        }
-
-        .alert {
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            font-size: 14px;
-            display: none;
-        }
-
-        .alert.show {
-            display: block;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
-        }
-
-        .alert-info {
-            background: #e0f2fe;
-            color: #075985;
-            border-left: 4px solid #0ea5e9;
-        }
-
-        .divider {
-            border: none;
-            border-top: 2px dashed #e1e5eb;
-            margin: 24px 0;
-        }
-
-        .tips {
-            background: #f8f9fa;
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 16px;
-        }
-
-        .tips h4 {
-            font-size: 14px;
-            color: #1a1a2e;
-            margin-bottom: 8px;
-        }
-
-        .tips ul {
-            list-style: none;
-            padding: 0;
-            font-size: 13px;
-            color: #4a4a6a;
-        }
-
-        .tips ul li {
-            padding: 4px 0;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .tips ul li:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 12px;
-            color: #9ca3af;
-        }
-
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 10px;
-        }
-
-        .loading.show {
-            display: block;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 4px solid #e1e5eb;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .success-icon {
-            font-size: 48px;
-            text-align: center;
-            display: block;
-            margin: 10px 0;
-        }
-
-        .issue-link {
-            color: #667eea;
-            word-break: break-all;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 24px;
-            }
-
-            .header h1 {
-                font-size: 22px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🔗 Backlink Manager</h1>
-            <div class="subtitle">Tambahkan link tanpa API — otomatis masuk ke bl.txt</div>
-            <div class="badge">📁 superkencang/backlink/bl.txt</div>
-        </div>
-
-        <!-- Alert -->
-        <div id="alert" class="alert"></div>
-
-        <!-- Form Tambah Link -->
-        <form id="linkForm" onsubmit="return submitLink(event)">
-            <div class="form-group">
-                <label for="url">URL / HREF</label>
-                <input type="text" id="url" placeholder="https://contoh.com/" required>
-            </div>
-
-            <div class="form-group">
-                <label for="anchor">Anchor Text (opsional)</label>
-                <input type="text" id="anchor" placeholder="Kosong = pakai URL">
-            </div>
-
-            <div class="form-group">
-                <label for="bulk">Atau tambah banyak (1 per baris)</label>
-                <textarea id="bulk" placeholder="https://contoh1.com&#10;https://contoh2.com&#10;/path-contoh"></textarea>
-            </div>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p style="margin-top:10px;color:#6b7280;">Menyimpan link...</p>
-            </div>
-
-            <button type="submit" class="btn" id="submitBtn">🚀 Tambahkan Link</button>
-        </form>
-
-        <hr class="divider">
-
-        <!-- Cara Kerja -->
-        <div class="tips">
-            <h4>💡 Cara Kerja:</h4>
-            <ul>
-                <li>Link akan disimpan sebagai <strong>Issue</strong> di GitHub</li>
-                <li>Otomatis diproses dan ditambahkan ke <strong>bl.txt</strong></li>
-                <li>Lihat hasilnya di: <a href="https://superkencang.github.io/backlink/bl.txt" target="_blank">superkencang.github.io/backlink/bl.txt</a></li>
-            </ul>
-        </div>
-
-        <!-- Tombol Tambahan -->
-        <div style="margin-top:16px;display:flex;gap:10px;">
-            <button class="btn btn-secondary" onclick="window.open('https://github.com/superkencang/backlink/issues/new', '_blank')">
-                📝 Buka Issues
-            </button>
-            <button class="btn btn-secondary" onclick="window.open('https://superkencang.github.io/backlink/bl.txt', '_blank')">
-                📄 Lihat bl.txt
-            </button>
-        </div>
-
-        <div class="footer">
-            <p>Data disimpan di <a href="https://github.com/superkencang/backlink" target="_blank">superkencang/backlink</a></p>
-        </div>
-    </div>
-
-    <script>
-        // ===== Konfigurasi =====
-        const REPO = 'superkencang/backlink';
-        const ISSUES_URL = `https://api.github.com/repos/${REPO}/issues`;
-        const BL_TXT_URL = 'https://superkencang.github.io/backlink/bl.txt';
-
-        // ===== Helper Functions =====
-        function showAlert(type, message, duration = 5000) {
-            const alert = document.getElementById('alert');
-            alert.className = `alert alert-${type} show`;
-            alert.innerHTML = message;
-
-            if (duration > 0) {
-                setTimeout(() => {
-                    alert.className = 'alert';
-                }, duration);
-            }
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function normalizeUrl(url) {
-            url = url.trim();
-            if (!url) return '';
-            if (!url.match(/^[a-z][a-z0-9+\-.]*:\/\//i)) {
-                if (url[0] !== '/') url = 'https://' + url;
-            }
-            return url;
-        }
-
-        function generateLink(url, anchor) {
-            url = normalizeUrl(url);
-            if (!url) return null;
-
-            const anchorText = anchor.trim() || url;
-            return `<a href="${escapeHtml(url)}" rel="dofollow">${escapeHtml(anchorText)}</a><br>`;
-        }
-
-        // ===== Submit Link =====
-        async function submitLink(event) {
-            event.preventDefault();
-
-            const url = document.getElementById('url').value.trim();
-            const anchor = document.getElementById('anchor').value.trim();
-            const bulk = document.getElementById('bulk').value.trim();
-
-            if (!url && !bulk) {
-                showAlert('error', '❌ Isi URL atau daftar bulk!');
-                return;
-            }
-
-            // Tentukan link yang akan disimpan
-            let links = [];
-
-            if (bulk) {
-                const lines = bulk.split('\n').map(u => u.trim()).filter(u => u);
-                for (const line of lines) {
-                    const link = generateLink(line, anchor);
-                    if (link) links.push(link);
-                }
-            } else {
-                const link = generateLink(url, anchor);
-                if (link) links.push(link);
-            }
-
-            if (links.length === 0) {
-                showAlert('error', '❌ Tidak ada URL valid!');
-                return;
-            }
-
-            // Siapkan data untuk Issue
-            const issueTitle = `Backlink: ${new Date().toLocaleString()}`;
-            const issueBody = `## 📌 Link Baru\n\n${links.join('\n')}\n\n---\n*Dikirim dari Backlink Manager*`;
-
-            // Tampilkan loading
-            document.getElementById('loading').classList.add('show');
-            document.getElementById('submitBtn').disabled = true;
-
-            try {
-                // Kirim ke GitHub Issues (tanpa auth = public issue)
-                const response = await fetch(ISSUES_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github.v3+json'
-                    },
-                    body: JSON.stringify({
-                        title: issueTitle,
-                        body: issueBody,
-                        labels: ['backlink']
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Gagal membuat issue');
-                }
-
-                const data = await response.json();
-
-                // Berhasil
-                showAlert('success', `
-                    ✅ Berhasil menambahkan ${links.length} link!<br>
-                    🔗 Issue: <a href="${data.html_url}" target="_blank">${data.html_url}</a><br>
-                    📄 Link akan muncul di <a href="${BL_TXT_URL}" target="_blank">bl.txt</a> dalam beberapa menit
-                `, 10000);
-
-                // Reset form
-                document.getElementById('url').value = '';
-                document.getElementById('anchor').value = '';
-                document.getElementById('bulk').value = '';
-
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('error', `❌ Gagal menyimpan: ${error.message}<br><br>💡 Pastikan repositori ${REPO} ada dan bisa diakses publik.`);
-            } finally {
-                document.getElementById('loading').classList.remove('show');
-                document.getElementById('submitBtn').disabled = false;
-            }
-        }
-
-        // ===== Keyboard Shortcut =====
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'Enter') {
-                document.getElementById('linkForm').dispatchEvent(new Event('submit'));
-            }
-        });
-
-        console.log('🔗 Backlink Manager siap!');
-        console.log(`📁 Repository: ${REPO}`);
-        console.log(`📄 Data akan disimpan di: ${BL_TXT_URL}`);
-        console.log('💡 Tips: Gunakan Ctrl+Enter untuk submit cepat');
-    </script>
-</body>
-</html>
+name: Sync Backlink dari Issues
+
+on:
+  issues:
+    types: [opened, edited, labeled, reopened]
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      contents: write
+      issues: write
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        
+      - name: Sync dari Issues ke bl.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📥 Mengambil data dari Issues..."
+          
+          # Ambil issue dengan label 'backlink' (untuk tambah)
+          ADD_ISSUES=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/issues?labels=backlink&state=open&per_page=100")
+          
+          # Ambil issue dengan label 'delete-backlink' (untuk hapus)
+          DELETE_ISSUES=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/issues?labels=delete-backlink&state=open&per_page=100")
+          
+          # ===== PROSES TAMBAH =====
+          echo '<div class="sponsor-area" style="position:absolute; left:-9999px;">' > bl.txt
+          
+          ADD_COUNT=$(echo "$ADD_ISSUES" | grep -o '"title"' | wc -l)
+          if [ "$ADD_COUNT" -gt 0 ]; then
+            echo "📝 Ditemukan $ADD_COUNT issue untuk ditambahkan"
+            
+            echo "$ADD_ISSUES" | grep -oP '(?<=<a href=")[^"]*' | while read -r link; do
+              if [ -n "$link" ]; then
+                echo "<a href=\"$link\" rel=\"dofollow\">$link</a><br>" >> bl.txt
+              fi
+            done
+          fi
+          
+          echo '</div>' >> bl.txt
+          
+          # ===== PROSES HAPUS =====
+          DELETE_COUNT=$(echo "$DELETE_ISSUES" | grep -o '"title"' | wc -l)
+          if [ "$DELETE_COUNT" -gt 0 ]; then
+            echo "🗑️ Ditemukan $DELETE_COUNT issue untuk dihapus"
+            
+            # Ambil link yang akan dihapus dari issue
+            echo "$DELETE_ISSUES" | grep -oP '(?<=<a href=")[^"]*' | while read -r link_to_delete; do
+              if [ -n "$link_to_delete" ]; then
+                echo "🗑️ Menghapus link: $link_to_delete"
+                # Hapus dari bl.txt
+                sed -i "/$link_to_delete/d" bl.txt
+              fi
+            done
+            
+            # Tutup issue setelah diproses
+            echo "$DELETE_ISSUES" | grep -o '"number":[0-9]*' | cut -d':' -f2 | while read -r issue_num; do
+              if [ -n "$issue_num" ]; then
+                echo "🔒 Menutup issue #$issue_num"
+                curl -X PATCH -H "Authorization: token $GITHUB_TOKEN" \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  "https://api.github.com/repos/${{ github.repository }}/issues/$issue_num" \
+                  -d '{"state":"closed"}'
+              fi
+            done
+          fi
+          
+      - name: Commit perubahan
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "🔄 Sync backlink dari Issues"
+          file_pattern: "bl.txt"
+          commit_user_name: "Backlink Bot"
+          commit_user_email: "bot@github.com"
