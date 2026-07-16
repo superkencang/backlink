@@ -1,0 +1,2 @@
+<div class="sponsor-area" style="position:absolute; left:-9999px;">
+</div>
